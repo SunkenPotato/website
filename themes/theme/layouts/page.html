@@ -1,0 +1,16 @@
+{{ define "main" }}
+    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }} {{
+    $dateHuman := .Date | time.Format ":date_long" }}
+    <section>
+        <div id="post-title-container">
+            <h2 id="post-title">{{ .Title }}</h2>
+            {{ $notPost := .Params.notPost }} {{ if not $notPost }}
+            <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+            {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+            {{ end }}
+        </div>
+    </section>
+    <section>
+        {{ .Content }}
+    </section>
+{{ end }}

@@ -1,0 +1,7 @@
+<div id="gallery">
+    {{ range resources.Match "photography/*" }}
+    <div class="photography-img-container">
+        <img class="photography-img" src="{{ .RelPermalink }}" />
+    </div>
+    {{- end }}
+</div>

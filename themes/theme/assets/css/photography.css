@@ -1,0 +1,27 @@
+.photography-img {
+    width: 100%;
+    object-fit: contain;
+}
+
+.photography-img-container {
+    padding: 10px 10px 5px 10px;
+    object-fit: contain;
+    outline: 1px solid var(--border-color);
+}
+
+#gallery {
+    display: grid;
+    gap: 10px;
+}
+
+@media (min-width: 600px) {
+    #gallery {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    #gallery {
+        grid-template-columns: 1fr;
+    }
+}

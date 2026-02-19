@@ -1,0 +1,11 @@
+{{ range site.RegularPages }}
+    {{ $notPost := .Params.notPost }}
+    {{ if not $notPost }}
+        <div class="post-card">
+            <h3 class="post-card-title">
+                <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+            </h3>
+            <div class="post-summary">{{ .Summary | plainify }}</div>
+        </div>
+    {{ end }}
+{{ end }}

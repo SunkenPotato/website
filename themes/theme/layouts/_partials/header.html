@@ -1,0 +1,8 @@
+<div id="header-container">
+    <div id="site-title-container">
+        <h1 id="site-title">
+            <a href="/" class="no-arrow">{{ site.Title }}</a>
+        </h1>
+    </div>
+    {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+</div>

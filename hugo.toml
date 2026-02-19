@@ -1,0 +1,33 @@
+baseURL = 'https://sunkenpotato.com/'
+languageCode = 'en-us'
+title = 'sp'
+theme = "theme"
+
+[menus]
+  [[menus.main]]
+    name = 'About'
+    pageRef = '/about'
+    weight = 10
+
+  [[menus.main]]
+    name = 'Posts'
+    pageRef = '/posts'
+    weight = 20
+
+  [[menus.main]]
+    name = 'Photography'
+    pageRef = '/photography'
+    weight = 30
+
+  [[menus.main]]
+    name = 'Tags'
+    pageRef = '/tags'
+    weight = 40
+
+[taxonomies]
+tag = 'tags'
+category = 'categories'
+
+[markup]
+    [markup.highlight]
+        style = 'catppuccin-latte'
