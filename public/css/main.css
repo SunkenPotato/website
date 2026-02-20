@@ -2,7 +2,7 @@
 
 :root {
     --border-color: #838589;
-    --highlight-color: {{ .Params.accent }};
+    --highlight-color: #157F1F;
 }
 
 *:not(.katex *) {

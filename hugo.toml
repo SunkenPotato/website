@@ -34,6 +34,12 @@ category = 'categories'
         style = 'catppuccin-latte'
     [markup.goldmark.renderer]
         unsafe = true
+    [markup.goldmark]
+        [markup.goldmark.extensions]
+            [markup.goldmark.extensions.passthrough.delimiters]
+                block = [['\[', '\]'], ['$$', '$$']]
+                inline = [['\(', '\)']]
 
 [params]
     accent = '#157F1F'
+    math = true

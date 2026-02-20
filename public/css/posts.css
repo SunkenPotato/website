@@ -1,0 +1,14 @@
+.post-summary {
+    padding-bottom: 5px;
+}
+
+.post-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 10px 0px;
+}
+
+.post-card-title {
+    margin: 0;
+}

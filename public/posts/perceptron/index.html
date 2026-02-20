@@ -1,0 +1,167 @@
+<!doctype html>
+<html
+    lang="en-us"
+    dir="ltr"
+>
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>
+    Perceptron | sp
+</title>
+
+    
+
+    
+        <link rel="stylesheet" href="/css/header.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/main.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/photography.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/post.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/posts.css">
+    
+ 
+        <script src="/js/main.js"></script>
+<link rel="stylesheet" href="https://use.typekit.net/nsi1cfz.css" />
+
+ <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css"
+    integrity="sha384-WcoG4HRXMzYzfCgiyfrySxx90XSl2rxY5mnVY5TwtWE6KLrArNKn0T/mOgNL0Mmi"
+    crossorigin="anonymous"
+/>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"
+    integrity="sha384-J+9dG2KMoiR9hqcFao0IBLwxt6zpcyN68IgwzsCSkbreXUjmNVRhPFTssqdSGjwQ"
+    crossorigin="anonymous"
+></script>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"
+    onload="renderMathInElement(document.body)"
+></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "\\[", right: "\\]", display: true }, 
+                { left: "$$", right: "$$", display: true }, 
+                { left: "\\(", right: "\\)", display: false }, 
+            ],
+            throwOnError: false,
+        });
+    });
+</script>
+ 
+
+    </head>
+    <body>
+        <header><div id="header-container">
+    <div id="site-title-container">
+        <h1 id="site-title">
+            <a href="/" class="no-arrow accent">sp</a>
+        </h1>
+    </div>
+    
+  <nav>
+    <span class="menu-item">
+      <a href="/about/">About</a>
+    </span>
+    <span class="menu-item">
+      <a aria-current="true" class="ancestor" href="/posts/">Posts</a>
+    </span>
+    <span class="menu-item">
+      <a href="/photography/">Photography</a>
+    </span>
+    <span class="menu-item">
+      <a href="/tags/">Tags</a>
+    </span>
+  </nav>
+
+</div>
+</header>
+        <main>
+     
+    <section>
+        <div id="post-title-container">
+            <h2 id="post-title">Perceptron</h2>
+             
+            <time datetime="2026-02-20T21:05:17&#43;01:00">February 20, 2026</time>
+            
+<div>
+    <a href="/tags/ml/">#ml</a>
+    <a href="/tags/math/">#math</a>
+    <a href="/tags/perceptron/">#perceptron</a>
+</div>
+
+            
+        </div>
+    </section>
+    <section>
+        <p>Hello! This is the first part of a relatively introductory series to Machine Learning/Artificial Intelligence, as well as
+the first part of the &ldquo;Perceptron&rdquo; subseries.</p>
+<p>Today, I&rsquo;d like to cover how a very basic Perceptron, or an artificial neuron works. They&rsquo;re the building blocks of
+neural networks and play a significant role in the development of AI.</p>
+<p>Perceptrons were first emulated by Frank Rosenblatt in 1957 on an IBM 704, the first computer produced <em>en masse</em> with
+support for FPA (Floating Point Arithmetic). Algebraically, a perceptron is quite simple. It can be thought of as the
+following function:
+$$
+f(x) = w \cdot x + b
+$$
+where:</p>
+<ul>
+<li>\(w, x \in \mathbb{R}^n \)</li>
+<li>\(b \in \mathbb{R}\)</li>
+</ul>
+<p>Obviously, \(x\) is the input. More specifically, it&rsquo;s a vector, so a &ldquo;list&rdquo; of inputs, which we multiply by our
+weights vector \(w\) and then add the bias \(b\) to.</p>
+<p>So, really, the perceptron is just a fancy linear function, which we all learned in seventh grade with the function <br>
+\(y = mx + b\). To actually extract some functionality from this perceptron though, it might be helpful to think back
+to how an actual neuron works. Given some set of inputs, a neuron either does or does not fire. We can express this as
+<code>1</code> or <code>0</code>.</p>
+<p>But the function we just defined up there isn&rsquo;t guaranteed to return either 1 or 0!</p>
+<p>That&rsquo;s true, which is why after we apply the first function to our inputs, we pass it through a special function you
+may or may not have heard of: \(sgn\). If you haven&rsquo;t, here&rsquo;s a quick definition:</p>
+<blockquote>
+<p>\(sgn\) returns either <code>-1</code> or <code>1</code> depending on the sign of <code>x</code>. That is, if it&rsquo;s negative, it returns <code>-1</code>, and if it&rsquo;s positive,
+it returns <code>1</code>. The special edge case is \(sgn(0)\), which usually is equal to 0, but for perceptrons, it&rsquo;s easier to define it as
+-1.</p>
+</blockquote>
+<p>So, mathematically, we&rsquo;ve just modeled a neuron!</p>
+<p>You might be asking now: &ldquo;Okay, but what good is this? What can I do with it?&rdquo;. Which is most certainly a fair question. Perceptrons are
+only good for answering &ldquo;yes&rdquo; or &ldquo;no&rdquo; to a given question.</p>
+<p>&hellip;which, when you think about it, seems kind of wrong to use &ldquo;only&rdquo;.</p>
+<p>You could ask the question &ldquo;Is this an apple?&rdquo; or &ldquo;Is transaction this credit card fraud?&rdquo; or
+&ldquo;Based on the attendance hours, grades, and missing homework of this student, is it likely that they will fail?&rdquo;</p>
+<p>That concludes the first part of the perceptron series. In the next post, I&rsquo;ll try to explain how we actually obtain those magical
+values \(w\) and \(b\) by training the Perceptron.</p>
+<p>Have a nice week!</p>
+<p>sp.</p>
+    </section>
+</main>
+        <footer><p>Copyright 2026. All rights reserved.</p>
+</footer>
+    </body>
+</html>

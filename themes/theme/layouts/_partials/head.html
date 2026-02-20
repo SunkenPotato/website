@@ -6,3 +6,5 @@
 </title>
 {{ partialCached "head/css.html" . }} {{ partialCached "head/js.html" . }}
 <link rel="stylesheet" href="https://use.typekit.net/nsi1cfz.css" />
+
+{{ if .Param "math" }} {{ partialCached "math.html" . }} {{ end }}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sp</title>
+    <link>http://localhost:1313/</link>
+    <description>Recent content on sp</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 20 Feb 2026 21:05:17 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Perceptron</title>
+      <link>http://localhost:1313/posts/perceptron/</link>
+      <pubDate>Fri, 20 Feb 2026 21:05:17 +0100</pubDate>
+      <guid>http://localhost:1313/posts/perceptron/</guid>
+      <description>&lt;p&gt;Hello! This is the first part of a relatively introductory series to Machine Learning/Artificial Intelligence, as well as&#xA;the first part of the &amp;ldquo;Perceptron&amp;rdquo; subseries.&lt;/p&gt;&#xA;&lt;p&gt;Today, I&amp;rsquo;d like to cover how a very basic Perceptron, or an artificial neuron works. They&amp;rsquo;re the building blocks of&#xA;neural networks and play a significant role in the development of AI.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>New site</title>
+      <link>http://localhost:1313/posts/new_site/</link>
+      <pubDate>Thu, 19 Feb 2026 19:44:30 +0100</pubDate>
+      <guid>http://localhost:1313/posts/new_site/</guid>
+      <description>&lt;p&gt;This is the first time since a long time that I&amp;rsquo;ve revamped my website, and personally, I really like the new theme (seems likely&#xA;considering I designed it myself!).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Photography</title>
+      <link>http://localhost:1313/photography/</link>
+      <pubDate>Thu, 19 Feb 2026 18:15:58 +0100</pubDate>
+      <guid>http://localhost:1313/photography/</guid>
+      <description>&lt;p&gt;Apart from other things, I do photography in my free time. My aspiration however, is to become a producer! This is is more or less&#xA;the full catalog of the pictures I&amp;rsquo;ve taken.&lt;/p&gt;&#xA;&lt;p&gt;All of the photos below are licensed under CC-BY-SA.&lt;/p&gt;&#xA;&lt;div id=&#34;gallery&#34;&gt;&#xA;    &#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/_DSC1544.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/_DSC1546.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC00614.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC00624.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC00626.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC00631.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC00647.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;    &lt;div class=&#34;photography-img-container&#34;&gt;&#xA;        &lt;img class=&#34;photography-img&#34; src=&#34;http://localhost:1313/photography/DSC01186.jpg&#34; /&gt;&#xA;    &lt;/div&gt;&#xA;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>http://localhost:1313/about/</link>
+      <pubDate>Thu, 19 Feb 2026 15:49:00 +0100</pubDate>
+      <guid>http://localhost:1313/about/</guid>
+      <description>&lt;h2 id=&#34;hello-im-sp&#34;&gt;Hello, I&amp;rsquo;m sp.&lt;/h2&gt;&#xA;&lt;p&gt;Also known as SunkenPotato.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;m an Albanian-American pursuing Computer Sciences, Visual Arts and Cycling (soon!).&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;m currently working on my own startup, about which I currently cannot – but in the near future will be able to – provide more information on.&lt;/p&gt;&#xA;&lt;p&gt;I have a small photography catalog available on this website &lt;a href=&#34;http://localhost:1313/photography&#34;&gt;here&lt;/a&gt;.&#xA;I use Lightroom and a Sony a6300 with a Tamron 17-70mm f2.8 for photography.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;m available for contact under &lt;a href=&#34;mailto:contact@sunkenpotato.com&#34;&gt;contact@sunkenpotato.com&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
