@@ -1,0 +1,5 @@
+<p>
+    Hugo Version: <code>{{ hugo.Version }}</code><br />
+    Source Hash:
+    <code> {{ with .Page.GitInfo }} {{ .AbbreviatedHash }} {{ end }} </code>
+</p>

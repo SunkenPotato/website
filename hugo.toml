@@ -2,6 +2,7 @@ baseURL = 'https://sunkenpotato.com/'
 languageCode = 'en-us'
 title = 'sp'
 theme = "theme"
+enableGitInfo = true
 
 [menus]
   [[menus.main]]
@@ -31,3 +32,8 @@ category = 'categories'
 [markup]
     [markup.highlight]
         style = 'catppuccin-latte'
+    [markup.goldmark.renderer]
+        unsafe = true
+
+[params]
+    accent = '#157F1F'

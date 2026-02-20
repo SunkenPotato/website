@@ -2,6 +2,7 @@
 
 :root {
     --border-color: #838589;
+    --highlight-color: {{ .Params.accent }};
 }
 
 * {
@@ -94,4 +95,16 @@ footer {
 footer p {
     padding: 5px 10px;
     margin: 0;
+}
+
+a.accent,
+a.accent:visited,
+a.accent:hover,
+a.accent:active,
+a.accent:focus, .accent {
+    color: var(--highlight-color);
+}
+
+::selection {
+    background-color: color-mix(in hsl, white 70%, var(--highlight-color));
 }
