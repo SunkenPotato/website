@@ -1,0 +1,298 @@
+<!doctype html>
+<html
+    lang="en-us"
+    dir="ltr"
+>
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>
+    Perceptrons: Training (#2) | sp
+</title>
+
+    
+
+    
+        <link rel="stylesheet" href="/css/header.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/main.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/photography.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/post.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/posts.css">
+    
+ 
+        <script src="/js/main.js"></script>
+<link rel="stylesheet" href="https://use.typekit.net/nsi1cfz.css" />
+
+ <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css"
+    integrity="sha384-WcoG4HRXMzYzfCgiyfrySxx90XSl2rxY5mnVY5TwtWE6KLrArNKn0T/mOgNL0Mmi"
+    crossorigin="anonymous"
+/>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"
+    integrity="sha384-J+9dG2KMoiR9hqcFao0IBLwxt6zpcyN68IgwzsCSkbreXUjmNVRhPFTssqdSGjwQ"
+    crossorigin="anonymous"
+></script>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"
+    onload="renderMathInElement(document.body)"
+></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "\\[", right: "\\]", display: true }, 
+                { left: "$$", right: "$$", display: true }, 
+                { left: "\\(", right: "\\)", display: false }, 
+            ],
+            throwOnError: false,
+        });
+    });
+</script>
+ 
+
+    </head>
+    <body>
+        <header><div id="header-container">
+    <div id="site-title-container">
+        <h1 id="site-title">
+            <a href="/" class="no-arrow highlight">sp</a>
+        </h1>
+    </div>
+    
+  <nav>
+    <span class="menu-item">
+      <a href="/about/">About</a>
+    </span>
+    <span class="menu-item">
+      <a aria-current="true" class="ancestor" href="/posts/">Posts</a>
+    </span>
+    <span class="menu-item">
+      <a href="/photography/">Photography</a>
+    </span>
+    <span class="menu-item">
+      <a href="/tags/">Tags</a>
+    </span>
+  </nav>
+
+</div>
+</header>
+        <main>
+     
+    <section>
+        <div id="post-title-container">
+            <h2 id="post-title">Perceptrons: Training (#2)</h2>
+             
+            <time datetime="2026-02-21T11:57:44&#43;01:00">February 21, 2026</time>
+            
+<div>
+    <a href="/tags/ml/">#ml</a>
+    <a href="/tags/math/">#math</a>
+    <a href="/tags/perceptron/">#perceptron</a>
+</div>
+
+            
+        </div>
+    </section>
+    <section>
+        <p>In <a href="/posts/perceptron/introduction">the last post</a>, I gave a relatively simple introduction and model for a perceptron. I feel like I
+didn&rsquo;t explain the algebraic definition quite well, so here&rsquo;s what I would like to add:</p>
+<blockquote>
+<p>The multiplication in the <a href="/posts/perceptron/introduction">algebraic representation</a> of a perceptron is the <em>dot product</em>. It is defined as the sum of the products of each element:
+$$ a \cdot b = \sum_i a_i b_i $$</p>
+</blockquote>
+<p>Now that we&rsquo;ve clarified that, here&rsquo;s my question from the last post: &ldquo;How do we actually obtain a useful weights vector \(w\)
+and a bias \(b\)?&rdquo;</p>
+<p>And a good parallel to look at is how we, humans, learn things. How does a child learn how to speak? It picks up words and even grammar
+from its surroundings. How does a student learn a math concept? It looks at the general rule first and then looks at examples
+(<em>usually</em>). The pattern here is that humans learn best by example. You <em>can</em>, of course, learn things without examples, and sometimes it
+may be more efficient, but for the sake of analogy, I&rsquo;d like to limit it to learning by example.</p>
+<p>Depending on your background as you read this post, you may or may not know that any kind of model requires example data to learn. Modern
+LLMs are trained on massive datasets of human speech, to then produce a replica of it. We then verify how well these models learned off
+of the training data by giving it some input and checking how well the output matches what we expect. This data is called <em>test data</em>.</p>
+<p>As an example, let&rsquo;s find some parameters for a perceptron which emulates the <code>AND</code> logic gate. We&rsquo;ll have to define inputs and outputs
+first (<code>0</code>  is mapped here to <code>-1</code>):</p>
+<table>
+  <thead>
+      <tr>
+          <th>Input A</th>
+          <th>Input B</th>
+          <th>Output</th>
+          <th>Input Vector Repr.</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{-1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{-1; 1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>{1; 1}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>So we have to find a function that:
+$$
+sgn(f(x)) = \hat{y} \newline
+$$
+or
+$$
+sgn(w \cdot x + b) = \hat{y}
+$$</p>
+<p>where \(\hat{y}\) is the expected output.</p>
+<p>If you want, take a minute to find a set of weights and a bias that fulfills these requirements.</p>
+<p>In our case, these are:
+$$
+w = \{1; 1\} \newline
+b = 1
+$$</p>
+<p>We can check this on the inputs/outputs of the <code>AND</code> gate, and we&rsquo;ll find that they do indeed work as expected.</p>
+<p>Since we&rsquo;re already modelling logic gates, we can try modelling another gate like <code>OR</code>:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Input A</th>
+          <th>Input B</th>
+          <th>Output</th>
+          <th>Input Vector Repr.</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{-1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>{-1; 1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+          <td><code>{1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>{1; 1}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>Again, you can take a moment to find the parameters. There isn&rsquo;t necessarily always one correct solution for modelling perceptrons, by
+the way:</p>
+<p>$$
+w = \{1; 1\} \newline
+b = 1
+$$</p>
+<p>And finally, you could try this for the <code>XOR</code> gate:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Input A</th>
+          <th>Input B</th>
+          <th>Output</th>
+          <th>Input Vector Repr.</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{-1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>{-1; 1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>-1</code></td>
+          <td><code>1</code></td>
+          <td><code>{1; -1}</code></td>
+      </tr>
+      <tr>
+          <td><code>1</code></td>
+          <td><code>1</code></td>
+          <td><code>-1</code></td>
+          <td><code>{1; 1}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>If you try to find some fitting weights and a bias for this gate however, you&rsquo;ll find it&rsquo;s not really possible. There&rsquo;s a reason for
+that, and it&rsquo;s one of the perceptron&rsquo;s limitations. Let&rsquo;s plot the <code>XOR</code> and the <code>AND</code> gate on a colored plane:</p>
+<figure><figcaption style="text-align: center;">
+      <h4 style="margin: 2px">XOR &amp; AND Gate plotted on a 2D-Plane</h4><p>Green = <code>1</code>; Red = <code>-1</code>. X-Axis is Input A, Y-Axis is Input B</p>
+    </figcaption>
+  <div class="framed-img">
+    <img src="/posts/xor_gate.png"
+        alt="Green = 1; Red = -1. X-Axis is Input A, Y-Axis is Input B">
+  </div></figure>
+<figure><figcaption style="text-align: center;">
+      <h4 style="margin: 2px">AND</h4>
+    </figcaption>
+  <div class="framed-img">
+    <img src="/posts/and_gate.png">
+  </div></figure>
+<p>You might notice that you can separate the outputs with a single line for <code>AND</code>, but not for <code>XOR</code>. This is called linear separability.</p>
+<h3 id="linear-separability-in-perceptrons">Linear separability in Perceptrons</h3>
+<p>Linear separability is a property of two sets of points. Simply, this means that there is a line that can separate
+both sets.</p>
+<p>&ndash; TODO</p>
+
+    </section>
+</main>
+        <footer><p>Copyright 2026. All rights reserved.</p>
+</footer>
+    </body>
+</html>

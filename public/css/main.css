@@ -5,13 +5,18 @@
     --highlight-color: #157F1F;
 }
 
-*:not(.katex *) {
+* {
+    text-wrap: unset;
+}
+
+*:not(.katex *, code, pre, pre *) {
     font-family: parabolica, sans-serif;
 }
 
 code,
 pre * {
     font-family: "IBM Plex Mono";
+    overflow-wrap: anywhere;
 }
 
 pre {
@@ -44,8 +49,6 @@ body {
     border-width: 0 1px;
 
     min-height: 100dvh;
-
-    overflow: initial;
 }
 
 a,
@@ -78,6 +81,17 @@ a:not(.no-arrow)::after {
 
 section {
     padding: 0px 20px;
+    row-gap: 400px;
+}
+
+img, figure {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+figure {
+    margin: 0;
 }
 
 main section:not(:last-child) {
@@ -97,14 +111,25 @@ footer p {
     margin: 0;
 }
 
-a.accent,
-a.accent:visited,
-a.accent:hover,
-a.accent:active,
-a.accent:focus, .accent {
+a.highlight,
+a.highlight:visited,
+a.highlight:hover,
+a.highlight:active,
+a.highlight:focus, .highlight {
     color: var(--highlight-color);
 }
 
 ::selection {
     background-color: color-mix(in hsl, white 70%, var(--highlight-color));
+}
+
+.framed-img img {
+    width: 100%;
+    object-fit: contain;
+}
+
+.framed-img {
+    padding: 10px 10px 5px 10px;
+    object-fit: contain;
+    outline: 1px solid var(--border-color);
 }

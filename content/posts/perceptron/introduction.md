@@ -1,7 +1,7 @@
 +++
 date = '2026-02-20T21:05:17+01:00'
 draft = false
-title = 'Perceptron'
+title = 'Perceptrons: Introduction (#1)'
 tags = ['ml', 'math', 'perceptron']
 +++
 

@@ -9,16 +9,17 @@ notPost = true
 
 Also known as SunkenPotato.
 
-I'm an Albanian-American pursuing Computer Sciences, Visual Arts and Cycling (soon!).
+I'm an Albanian-American pursuing Computer Sciences, Visual Arts and Cycling.
 
-I'm currently working on my own startup, about which I currently cannot – but in the near future will be able to – provide more information on.
+I'm currently working on my own startup, [2pick](https://2pick.de). 
 
 I have a small photography catalog available on this website [here](/photography). 
 I use Lightroom and a Sony a6300 with a Tamron 17-70mm f2.8 for photography.
 
 I'm available for contact under [contact@sunkenpotato.com](mailto:contact@sunkenpotato.com).
 
-The theme and source of this website are available [here](https://github.com/SunkenPotato/website).
+The theme and source of this website are available [here](https://github.com/SunkenPotato/website). 
+Proudly made without the use of Artificial Intelligence.
 
 Links:
 - [GitHub](https://github.com/SunkenPotato/)

@@ -6,13 +6,20 @@
     <description>Recent content in Ml on sp</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Feb 2026 21:05:17 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 21 Feb 2026 11:57:44 +0100</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/ml/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Perceptron</title>
-      <link>http://localhost:1313/posts/perceptron/</link>
+      <title>Perceptrons: Training (#2)</title>
+      <link>http://localhost:1313/posts/perceptron/training/</link>
+      <pubDate>Sat, 21 Feb 2026 11:57:44 +0100</pubDate>
+      <guid>http://localhost:1313/posts/perceptron/training/</guid>
+      <description>&lt;p&gt;In &lt;a href=&#34;http://localhost:1313/posts/perceptron/introduction&#34;&gt;the last post&lt;/a&gt;, I gave a relatively simple introduction and model for a perceptron. I feel like I&#xA;didn&amp;rsquo;t explain the algebraic definition quite well, so here&amp;rsquo;s what I would like to add:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;The multiplication in the &lt;a href=&#34;http://localhost:1313/posts/perceptron/introduction&#34;&gt;algebraic representation&lt;/a&gt; of a perceptron is the &lt;em&gt;dot product&lt;/em&gt;. It is defined as the sum of the products of each element:&#xA;$$ a \cdot b = \sum_i a_i b_i $$&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;Now that we&amp;rsquo;ve clarified that, here&amp;rsquo;s my question from the last post: &amp;ldquo;How do we actually obtain a useful weights vector \(w\)&#xA;and a bias \(b\)?&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Perceptrons: Introduction (#1)</title>
+      <link>http://localhost:1313/posts/perceptron/introduction/</link>
       <pubDate>Fri, 20 Feb 2026 21:05:17 +0100</pubDate>
-      <guid>http://localhost:1313/posts/perceptron/</guid>
+      <guid>http://localhost:1313/posts/perceptron/introduction/</guid>
       <description>&lt;p&gt;Hello! This is the first part of a relatively introductory series to Machine Learning/Artificial Intelligence, as well as&#xA;the first part of the &amp;ldquo;Perceptron&amp;rdquo; subseries.&lt;/p&gt;&#xA;&lt;p&gt;Today, I&amp;rsquo;d like to cover how a very basic Perceptron, or an artificial neuron works. They&amp;rsquo;re the building blocks of&#xA;neural networks and play a significant role in the development of AI.&lt;/p&gt;</description>
     </item>
   </channel>

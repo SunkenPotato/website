@@ -6,13 +6,20 @@
     <description>Recent content in Posts on sp</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Feb 2026 21:05:17 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 21 Feb 2026 11:57:44 +0100</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Perceptron</title>
-      <link>http://localhost:1313/posts/perceptron/</link>
+      <title>Perceptrons: Training (#2)</title>
+      <link>http://localhost:1313/posts/perceptron/training/</link>
+      <pubDate>Sat, 21 Feb 2026 11:57:44 +0100</pubDate>
+      <guid>http://localhost:1313/posts/perceptron/training/</guid>
+      <description>&lt;p&gt;In &lt;a href=&#34;http://localhost:1313/posts/perceptron/introduction&#34;&gt;the last post&lt;/a&gt;, I gave a relatively simple introduction and model for a perceptron. I feel like I&#xA;didn&amp;rsquo;t explain the algebraic definition quite well, so here&amp;rsquo;s what I would like to add:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;The multiplication in the &lt;a href=&#34;http://localhost:1313/posts/perceptron/introduction&#34;&gt;algebraic representation&lt;/a&gt; of a perceptron is the &lt;em&gt;dot product&lt;/em&gt;. It is defined as the sum of the products of each element:&#xA;$$ a \cdot b = \sum_i a_i b_i $$&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;Now that we&amp;rsquo;ve clarified that, here&amp;rsquo;s my question from the last post: &amp;ldquo;How do we actually obtain a useful weights vector \(w\)&#xA;and a bias \(b\)?&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Perceptrons: Introduction (#1)</title>
+      <link>http://localhost:1313/posts/perceptron/introduction/</link>
       <pubDate>Fri, 20 Feb 2026 21:05:17 +0100</pubDate>
-      <guid>http://localhost:1313/posts/perceptron/</guid>
+      <guid>http://localhost:1313/posts/perceptron/introduction/</guid>
       <description>&lt;p&gt;Hello! This is the first part of a relatively introductory series to Machine Learning/Artificial Intelligence, as well as&#xA;the first part of the &amp;ldquo;Perceptron&amp;rdquo; subseries.&lt;/p&gt;&#xA;&lt;p&gt;Today, I&amp;rsquo;d like to cover how a very basic Perceptron, or an artificial neuron works. They&amp;rsquo;re the building blocks of&#xA;neural networks and play a significant role in the development of AI.&lt;/p&gt;</description>
     </item>
     <item>
@@ -21,6 +28,13 @@
       <pubDate>Thu, 19 Feb 2026 19:44:30 +0100</pubDate>
       <guid>http://localhost:1313/posts/new_site/</guid>
       <description>&lt;p&gt;This is the first time since a long time that I&amp;rsquo;ve revamped my website, and personally, I really like the new theme (seems likely&#xA;considering I designed it myself!).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Rust implmentation of K-Means</title>
+      <link>http://localhost:1313/posts/perceptron/k-means/</link>
+      <pubDate>Sun, 17 Nov 2024 09:45:49 +0100</pubDate>
+      <guid>http://localhost:1313/posts/perceptron/k-means/</guid>
+      <description>&lt;p&gt;I got an assignment for this week: write the K-Means algorithm, in any language you like. &lt;br&gt;&#xA;So, first, we have to understand what it does and how it works.&lt;/p&gt;&#xA;&lt;h2 id=&#34;what-is-k-means&#34;&gt;What is K-Means?&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;k-means clustering is a method of vector quantization, originally from signal processing, that aims to partition n observations into k clusters in which each observation belongs to the cluster with the nearest mean (cluster centers or cluster centroid), serving as a prototype of the cluster. &lt;sup&gt;[1]&lt;/sup&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

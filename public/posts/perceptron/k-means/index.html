@@ -1,0 +1,401 @@
+<!doctype html>
+<html
+    lang="en-us"
+    dir="ltr"
+>
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<title>
+    Rust implementation of K-Means | sp
+</title>
+
+    
+
+    
+        <link rel="stylesheet" href="/css/header.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/main.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/photography.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/post.css">
+    
+
+    
+
+    
+        <link rel="stylesheet" href="/css/posts.css">
+    
+ 
+        <script src="/js/main.js"></script>
+<link rel="stylesheet" href="https://use.typekit.net/nsi1cfz.css" />
+
+ <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css"
+    integrity="sha384-WcoG4HRXMzYzfCgiyfrySxx90XSl2rxY5mnVY5TwtWE6KLrArNKn0T/mOgNL0Mmi"
+    crossorigin="anonymous"
+/>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"
+    integrity="sha384-J+9dG2KMoiR9hqcFao0IBLwxt6zpcyN68IgwzsCSkbreXUjmNVRhPFTssqdSGjwQ"
+    crossorigin="anonymous"
+></script>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+    crossorigin="anonymous"
+    onload="renderMathInElement(document.body)"
+></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "\\[", right: "\\]", display: true }, 
+                { left: "$$", right: "$$", display: true }, 
+                { left: "\\(", right: "\\)", display: false }, 
+            ],
+            throwOnError: false,
+        });
+    });
+</script>
+ 
+
+    </head>
+    <body>
+        <header><div id="header-container">
+    <div id="site-title-container">
+        <h1 id="site-title">
+            <a href="/" class="no-arrow highlight">sp</a>
+        </h1>
+    </div>
+    
+  <nav>
+    <span class="menu-item">
+      <a href="/about/">About</a>
+    </span>
+    <span class="menu-item">
+      <a aria-current="true" class="ancestor" href="/posts/">Posts</a>
+    </span>
+    <span class="menu-item">
+      <a href="/photography/">Photography</a>
+    </span>
+    <span class="menu-item">
+      <a href="/tags/">Tags</a>
+    </span>
+  </nav>
+
+</div>
+</header>
+        <main>
+     
+    <section>
+        <div id="post-title-container">
+            <h2 id="post-title">Rust implementation of K-Means</h2>
+             
+            <time datetime="2024-11-17T09:45:49&#43;01:00">November 17, 2024</time>
+            
+<div>
+    <a href="/tags/rust/">#rust</a>
+</div>
+
+            
+        </div>
+    </section>
+    <section>
+        <p>I got an assignment for this week: write the K-Means algorithm, in any language you like. <br>
+So, first, we have to understand what it does and how it works.</p>
+<h2 id="what-is-k-means">What is K-Means?</h2>
+<blockquote>
+<p>k-means clustering is a method of vector quantization, originally from signal processing, that aims to partition n observations into k clusters in which each observation belongs to the cluster with the nearest mean (cluster centers or cluster centroid), serving as a prototype of the cluster. <sup>[1]</sup></p>
+</blockquote>
+<p>That, is copied directly from wikipedia, and the first time I read it, I had <strong>no idea</strong> what it was talking about. <br>
+In short, it&rsquo;s an algorithm that you give a bunch of datapoints, and it attempts to cluster them into groups.</p>
+<p>It follows these steps:</p>
+<ol>
+<li>Choose \(k\) random points from the dataset as centers for the individual clusters (centroids).</li>
+<li>Associate each point with its nearest centroid. The distance is calculated with <a href="https://en.wikipedia.org/wiki/Euclidean_Distance">Euclidean Distance</a></li>
+<li>Every centroid gets updated to match the average point in their respective cluster.</li>
+<li>Steps 2 &amp; 3 are repeated until the centroids no longer update (&ldquo;convergence&rdquo;).</li>
+</ol>
+<p>So, how do we implement it?</p>
+<h2 id="implementation">Implementation</h2>
+<h3 id="setting-up-the-project">Setting up the project</h3>
+<p>Create a new project, and add the following crates:</p>
+<ul>
+<li><code>glam</code> (for <code>Vec2</code>s and other math operations)</li>
+<li><code>index_vec</code> (I&rsquo;ll explain why later),
+and</li>
+<li><code>rand</code> (so we can choose points and generate a dataset)</li>
+</ul>
+<p>Let&rsquo;s define a type alias and an index (for <code>index_vec</code>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">type</span> <span style="color:#df8e1d">Point</span> <span style="color:#04a5e5;font-weight:bold">=</span> Vec2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>index_vec::<span style="color:#1e66f5">define_index_type!</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">pub</span> <span style="color:#8839ef">struct</span> <span style="color:#df8e1d">PointIdx</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#d20f39">usize</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="generating-a-dataset">Generating a dataset</h3>
+<p>First, we&rsquo;ll have to make a dataset. This is optional, but I had to since it was homework and there was no dataset provided. <br>
+In python, you would do this with <code>scikit</code>&rsquo;s <code>make_blobs</code> function, but we can achieve something similar.</p>
+<p>We need to take the arguments:</p>
+<ul>
+<li><code>clusters</code> (how many clusters to generate)</li>
+<li><code>n_samp</code> (how many points to generate overall)</li>
+<li><code>std</code> (the standard distribution, i.e., how scattered the points can be from their centroid)</li>
+</ul>
+<p>Let&rsquo;s define defaults and the function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">const</span> <span style="color:#df8e1d">DEFAULT_CLUSTERS</span>: <span style="color:#d20f39">usize</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">4</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">const</span> <span style="color:#df8e1d">DEFAULT_N_SAMP</span>: <span style="color:#d20f39">usize</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">100</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">const</span> <span style="color:#df8e1d">DEFAULT_STD</span>: <span style="color:#d20f39">f32</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">0.8</span>;
+</span></span><span style="display:flex;"><span><span style="color:#04a5e5;font-weight:bold">..</span>.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">generate_datapoints</span>(
+</span></span><span style="display:flex;"><span>    clusters: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">usize</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    n_samp: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">usize</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    std: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">f32</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>) -&gt; <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#1e66f5">todo!</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>How do we generate these? <br>
+I decided to randomly generate one point and then use <code>std</code> as a radius around that point for all the other points in that cluster.
+That way, we get a random looking cluster.</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">generate_datapoints</span>(
+</span></span><span style="display:flex;"><span>    clusters: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">usize</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    n_samp: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">usize</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    std: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">f32</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>) -&gt; <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> clusters <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#8839ef">match</span> clusters {
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">Some</span>(v) <span style="color:#04a5e5;font-weight:bold">=&gt;</span> v,
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">None</span> <span style="color:#04a5e5;font-weight:bold">=&gt;</span> <span style="color:#df8e1d">DEFAULT_CLUSTERS</span>
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> n_samp <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#8839ef">match</span> n_samp {
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">Some</span>(v) <span style="color:#04a5e5;font-weight:bold">=&gt;</span> v,
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">None</span> <span style="color:#04a5e5;font-weight:bold">=&gt;</span> <span style="color:#df8e1d">DEFAULT_N_SAMP</span>
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> std <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#8839ef">match</span> std {
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">Some</span>(v) <span style="color:#04a5e5;font-weight:bold">=&gt;</span> v,
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">None</span> <span style="color:#04a5e5;font-weight:bold">=&gt;</span> <span style="color:#df8e1d">DEFAULT_STD</span>
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> centroids: <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#1e66f5">index_vec!</span>[Point::default(), clusters];
+</span></span><span style="display:flex;"><span>    <span style="color:#9ca0b0;font-style:italic">// IndexVec doesn&#39;t provide a fill_with method, so we have to use this
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> el <span style="color:#8839ef">in</span> <span style="color:#04a5e5;font-weight:bold">&amp;</span><span style="color:#8839ef">mut</span> centroids {
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5;font-weight:bold">*</span>el <span style="color:#04a5e5;font-weight:bold">=</span> random_point();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> points <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#1e66f5">index_vec!</span>[];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> ctr <span style="color:#8839ef">in</span> centroids.iter() {
+</span></span><span style="display:flex;"><span>        <span style="color:#8839ef">for</span> _ <span style="color:#8839ef">in</span> <span style="color:#fe640b">0</span><span style="color:#04a5e5;font-weight:bold">..</span>n_samp <span style="color:#04a5e5;font-weight:bold">/</span> clusters {
+</span></span><span style="display:flex;"><span>            <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> point <span style="color:#04a5e5;font-weight:bold">=</span> random_point();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8839ef">while</span> point.distance(<span style="color:#04a5e5;font-weight:bold">*</span>ctr) <span style="color:#04a5e5;font-weight:bold">&gt;</span> std {
+</span></span><span style="display:flex;"><span>                point <span style="color:#04a5e5;font-weight:bold">=</span> random_point();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            points.push(point);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    points.append(<span style="color:#04a5e5;font-weight:bold">&amp;</span><span style="color:#8839ef">mut</span> centroids); <span style="color:#9ca0b0;font-style:italic">// optional, this way the amount of points is always n_samp + clusters.
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    points
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Here, we&rsquo;re generating the centroids and then an equal amount of points for each of them respectively. We&rsquo;re kind of guessing where to put the points.</p>
+<p>The utility function, <code>random_point</code> is defined as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">use</span> rand::thread_rng;
+</span></span><span style="display:flex;"><span><span style="color:#04a5e5;font-weight:bold">..</span>.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">fn</span> <span style="color:#1e66f5">random_point</span>() -&gt; <span style="color:#df8e1d">Point</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> rng <span style="color:#04a5e5;font-weight:bold">=</span> thread_rng();
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> (x, y) <span style="color:#04a5e5;font-weight:bold">=</span> (rng.gen_range(<span style="color:#fe640b">0_</span><span style="color:#8839ef">f32</span><span style="color:#04a5e5;font-weight:bold">..</span><span style="color:#fe640b">20_</span><span style="color:#8839ef">f32</span>), rng.gen_range(<span style="color:#fe640b">0_</span><span style="color:#8839ef">f32</span><span style="color:#04a5e5;font-weight:bold">..</span><span style="color:#fe640b">20_</span><span style="color:#8839ef">f32</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Point::new(x, y)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>It generates a random point in a 20x20 coordinate grid, you can change the size though.</p>
+<h3 id="pick-some-centroids">Pick some centroids</h3>
+<p>This part is pretty easy. All we do is pick some random points and return them: <br>
+We also have to define a <code>CentroidIdx</code> struct though (more on that later).</p>
+<p>We&rsquo;re taking the arguments:</p>
+<ul>
+<li><code>dataset</code>: the dataset we generated before</li>
+<li><code>k</code>: the amount of centroids to pick. This defaults, like that other function, to <code>DEFAULT_CLUSTERS</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>index_vec::<span style="color:#1e66f5">define_index_type!</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">pub</span> <span style="color:#8839ef">struct</span> <span style="color:#df8e1d">CentroidIdx</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#d20f39">usize</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">pick_centroids</span>(
+</span></span><span style="display:flex;"><span>    dataset: <span style="color:#8839ef">&amp;</span><span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    k: <span style="color:#04a5e5">Option</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#d20f39">usize</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span>) -&gt; <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> k <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#8839ef">match</span> k {
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">Some</span>(v) <span style="color:#04a5e5;font-weight:bold">=&gt;</span> v,
+</span></span><span style="display:flex;"><span>        <span style="color:#04a5e5">None</span> <span style="color:#04a5e5;font-weight:bold">=&gt;</span> <span style="color:#df8e1d">DEFAULT_CLUSTERS</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> thread_rng <span style="color:#04a5e5;font-weight:bold">=</span> thread_rng();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> centroid_vec <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#1e66f5">index_vec!</span>[];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> _ <span style="color:#8839ef">in</span> <span style="color:#fe640b">0</span><span style="color:#04a5e5;font-weight:bold">..</span>k {
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> random_centroid <span style="color:#04a5e5;font-weight:bold">=</span> dataset.raw.choose(<span style="color:#04a5e5;font-weight:bold">&amp;</span><span style="color:#8839ef">mut</span> thread_rng).expect(<span style="color:#40a02b">&#34;non empty list&#34;</span>);
+</span></span><span style="display:flex;"><span>        centroid_vec.push(random_centroid.clone());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    centroid_vec    
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Alright, cool! We&rsquo;ve finished steps 1 &amp; 2.</p>
+<p>The next part — associating the centroids with points — was the hardest for me.
+My original idea was to use a <code>HashMap&lt;&amp;Point, Vec&lt;&amp;Point&gt;&gt;</code> to show the associations. <br>
+<code>HashMap&lt;K, V&gt;</code> however, requires:</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>K: <span style="color:#04a5e5">Eq</span> <span style="color:#04a5e5;font-weight:bold">+</span> Hash
+</span></span></code></pre></div><p>This means that <code>K</code> needs to implement <code>Eq + Hash</code>. <code>Point</code> does <em>not</em> implement either of those, since it&rsquo;s defined as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">struct</span> <span style="color:#df8e1d">Vec2</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">pub</span> x: <span style="color:#d20f39">f32</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">pub</span> y: <span style="color:#d20f39">f32</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>f32</code> does not implement <code>Eq</code>, because <code>f32::NaN != f32::NaN</code> <sup>[2]</sup> <br>
+Now, those mystical indices that we defined before come into play. Instead of returning that kind of <code>HashMap</code>, we can return: <code>HashMap&lt;CentroidIdx, Vec&lt;&amp;Point&gt;&gt;</code></p>
+<p>We need to take the arguments:</p>
+<ul>
+<li><code>dataset</code>: our original dataset, and</li>
+<li><code>centroids</code>: the centroids that we chose earlier</li>
+</ul>
+<p>So:</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">associate_centroids_to_points</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#1e66f5">&#39;c</span>, <span style="color:#1e66f5">&#39;d</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>(
+</span></span><span style="display:flex;"><span>    dataset: <span style="color:#8839ef">&amp;</span><span style="color:#1e66f5">&#39;d</span> <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    centroids: <span style="color:#8839ef">&amp;</span><span style="color:#1e66f5">&#39;c</span> <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>) -&gt; <span style="color:#df8e1d">HashMap</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, <span style="color:#04a5e5">Vec</span><span style="color:#04a5e5;font-weight:bold">&lt;&amp;</span><span style="color:#1e66f5">&#39;d</span> Point<span style="color:#04a5e5;font-weight:bold">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#1e66f5">todo!</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Instead of mapping the points to an actual centroid point, we can map them to the index of that centroid in the <code>centroids</code> vec.</p>
+<p>We have to iterate over each point, and then over each centroid. We then measure the distance to each centroid for that point and pick the smallest distance. Then, we can just associate that point with that centroid.
+We&rsquo;re going to need a <code>CentroidDistance</code> structure to keep track of the distances, too.</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">struct</span> <span style="color:#df8e1d">CentroidDistance</span> {
+</span></span><span style="display:flex;"><span>    idx: <span style="color:#df8e1d">CentroidIdx</span>,
+</span></span><span style="display:flex;"><span>    distance: <span style="color:#d20f39">f32</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">associate_centroids_to_points</span><span style="color:#04a5e5;font-weight:bold">&lt;</span><span style="color:#1e66f5">&#39;c</span>, <span style="color:#1e66f5">&#39;d</span><span style="color:#04a5e5;font-weight:bold">&gt;</span>(
+</span></span><span style="display:flex;"><span>    dataset: <span style="color:#8839ef">&amp;</span><span style="color:#1e66f5">&#39;d</span> <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>PointIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>    centroids: <span style="color:#8839ef">&amp;</span><span style="color:#1e66f5">&#39;c</span> <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>,
+</span></span><span style="display:flex;"><span>) -&gt; <span style="color:#df8e1d">HashMap</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, <span style="color:#04a5e5">Vec</span><span style="color:#04a5e5;font-weight:bold">&lt;&amp;</span><span style="color:#1e66f5">&#39;d</span> Point<span style="color:#04a5e5;font-weight:bold">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> associations <span style="color:#04a5e5;font-weight:bold">=</span> HashMap::new();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> point <span style="color:#8839ef">in</span> dataset {
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> distances: <span style="color:#04a5e5">Vec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidDistance<span style="color:#04a5e5;font-weight:bold">&gt;</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#1e66f5">vec!</span>[];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8839ef">for</span> (idx, ctr) <span style="color:#8839ef">in</span> centroids.iter_enumerated() {
+</span></span><span style="display:flex;"><span>            <span style="color:#d20f39">let</span> cdist <span style="color:#04a5e5;font-weight:bold">=</span> CentroidDistance {
+</span></span><span style="display:flex;"><span>                idx,
+</span></span><span style="display:flex;"><span>                distance: <span style="color:#df8e1d">point</span>.distance(<span style="color:#04a5e5;font-weight:bold">*</span>ctr)
+</span></span><span style="display:flex;"><span>            };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            distances.push(cdist);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> smallest <span style="color:#04a5e5;font-weight:bold">=</span> distances
+</span></span><span style="display:flex;"><span>            .iter()
+</span></span><span style="display:flex;"><span>            .min_by(<span style="color:#04a5e5;font-weight:bold">|</span>x, y<span style="color:#04a5e5;font-weight:bold">|</span> x.distance.partial_cmp(<span style="color:#04a5e5;font-weight:bold">&amp;</span>y.distance).unwrap()) <span style="color:#9ca0b0;font-style:italic">// we can&#39;t use min here, since min requires `Ord`, which f32 doesn&#39;t implement.
+</span></span></span><span style="display:flex;"><span>            .expect(<span style="color:#40a02b">&#34;non-empty vec&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        associations.entry(smallest.idx).or_insert(<span style="color:#1e66f5">vec!</span>[]).push(point);
+</span></span><span style="display:flex;"><span>        <span style="color:#9ca0b0;font-style:italic">// if the centroid doesn&#39;t have any points yet, we just create a new vec
+</span></span></span><span style="display:flex;"><span>        <span style="color:#9ca0b0;font-style:italic">// and then push the point to it.
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    associations
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Our last step is to write a function to update those centroids.
+This is fairly simple, all we do is calculate the average point for each cluster and return them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">update_centroids</span>(assoc: <span style="color:#8839ef">&amp;</span><span style="color:#df8e1d">HashMap</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, <span style="color:#04a5e5">Vec</span><span style="color:#04a5e5;font-weight:bold">&lt;&amp;</span>Point<span style="color:#04a5e5;font-weight:bold">&gt;&gt;</span>) -&gt; <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> new_centroids: <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Point<span style="color:#04a5e5;font-weight:bold">&gt;</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#1e66f5">index_vec!</span>[];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> centroid_indices <span style="color:#04a5e5;font-weight:bold">=</span> assoc.keys();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> index <span style="color:#8839ef">in</span> centroid_indices {
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> values <span style="color:#04a5e5;font-weight:bold">=</span> assoc.get(index).expect(<span style="color:#40a02b">&#34;valid indices returned by .keys()&#34;</span>);
+</span></span><span style="display:flex;"><span>        new_centroids.push(calculate_average_point(values));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    new_centroids
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">pub</span> <span style="color:#8839ef">fn</span> <span style="color:#1e66f5">calculate_average_point</span>(points: <span style="color:#8839ef">&amp;</span><span style="color:#04a5e5">Vec</span><span style="color:#04a5e5;font-weight:bold">&lt;&amp;</span>Point<span style="color:#04a5e5;font-weight:bold">&gt;</span>) -&gt; <span style="color:#df8e1d">Point</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> x: <span style="color:#d20f39">f32</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">0</span><span style="color:#8839ef">f32</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> y: <span style="color:#d20f39">f32</span> <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">0</span><span style="color:#8839ef">f32</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> l <span style="color:#04a5e5;font-weight:bold">=</span> points.iter().len() <span style="color:#8839ef">as</span> <span style="color:#d20f39">f32</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">for</span> point <span style="color:#8839ef">in</span> points {
+</span></span><span style="display:flex;"><span>        x <span style="color:#04a5e5;font-weight:bold">+=</span> point.x;
+</span></span><span style="display:flex;"><span>        y <span style="color:#04a5e5;font-weight:bold">+=</span> point.y;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#04a5e5;font-weight:bold">/=</span> l;
+</span></span><span style="display:flex;"><span>    y <span style="color:#04a5e5;font-weight:bold">/=</span> l;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Point::new(x, y)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And would you look at that, we&rsquo;re done! The only thing left to do is mash it all together and run it.
+Also, when we compare the centroids, we have to make sure that the vectors are the same <strong>regardless of order</strong>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#4c4f69;background-color:#eff1f5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#9ca0b0;font-style:italic">// Smaller in this case is defined as closer to [0, 0]
+</span></span></span><span style="display:flex;"><span><span style="color:#8839ef">fn</span> <span style="color:#1e66f5">sort_point_vec</span>(v: <span style="color:#8839ef">&amp;</span><span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Vec2<span style="color:#04a5e5;font-weight:bold">&gt;</span>) -&gt; <span style="color:#df8e1d">IndexVec</span><span style="color:#04a5e5;font-weight:bold">&lt;</span>CentroidIdx, Vec2<span style="color:#04a5e5;font-weight:bold">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> vec_clone <span style="color:#04a5e5;font-weight:bold">=</span> v.clone();
+</span></span><span style="display:flex;"><span>    vec_clone.sort_by(<span style="color:#04a5e5;font-weight:bold">|</span>a, b<span style="color:#04a5e5;font-weight:bold">|</span> a.x.total_cmp(<span style="color:#04a5e5;font-weight:bold">&amp;</span>b.x).cmp(<span style="color:#04a5e5;font-weight:bold">&amp;</span>a.y.total_cmp(<span style="color:#04a5e5;font-weight:bold">&amp;</span>b.y)));
+</span></span><span style="display:flex;"><span>    vec_clone
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#04a5e5;font-weight:bold">..</span>.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8839ef">fn</span> <span style="color:#1e66f5">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> dataset <span style="color:#04a5e5;font-weight:bold">=</span> generate_datapoints(<span style="color:#04a5e5">None</span>, <span style="color:#04a5e5">None</span>, <span style="color:#04a5e5">None</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> old_centroids <span style="color:#04a5e5;font-weight:bold">=</span> pick_centroids(<span style="color:#04a5e5;font-weight:bold">&amp;</span>dataset, <span style="color:#04a5e5">None</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d20f39">let</span> <span style="color:#8839ef">mut</span> counter <span style="color:#04a5e5;font-weight:bold">=</span> <span style="color:#fe640b">1</span><span style="color:#8839ef">u8</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8839ef">loop</span> {
+</span></span><span style="display:flex;"><span>        ctr <span style="color:#04a5e5;font-weight:bold">+=</span> <span style="color:#fe640b">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> associations <span style="color:#04a5e5;font-weight:bold">=</span> associate_centroids_to_points(<span style="color:#04a5e5;font-weight:bold">&amp;</span>dataset, <span style="color:#04a5e5;font-weight:bold">&amp;</span>old_centroids);
+</span></span><span style="display:flex;"><span>        <span style="color:#d20f39">let</span> new_centroids <span style="color:#04a5e5;font-weight:bold">=</span> update_centroids(<span style="color:#04a5e5;font-weight:bold">&amp;</span>assoc);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8839ef">if</span> sort_point_vec(<span style="color:#04a5e5;font-weight:bold">&amp;</span>new_centroids) <span style="color:#04a5e5;font-weight:bold">==</span> sort_point_vec(<span style="color:#04a5e5;font-weight:bold">&amp;</span>old_centroids) {
+</span></span><span style="display:flex;"><span>            <span style="color:#8839ef">break</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#1e66f5">println!</span>(<span style="color:#40a02b">&#34;K-Means completed with n=</span><span style="color:#40a02b">{ctr}</span><span style="color:#40a02b"> runs&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>That&rsquo;s pretty much it. The next step would be removing the k from the equation and making the algorithm guess it, but I&rsquo;m not covering that here.</p>
+<p>You can find the full code <a href="https://github.com/SunkenPotato/kmeans-rs">here</a></p>
+<p>Thanks for reading!</p>
+<hr>
+<p>References:</p>
+<ul>
+<li>[1]: <a href="https://en.wikipedia.org/wiki/K-means_clustering">https://en.wikipedia.org/wiki/K-means_clustering</a></li>
+<li>[2]: <a href="https://doc.rust-lang.org/std/primitive.f32.html#nan-bit-patterns">https://doc.rust-lang.org/std/primitive.f32.html#nan-bit-patterns</a></li>
+</ul>
+
+    </section>
+</main>
+        <footer><p>Copyright 2026. All rights reserved.</p>
+</footer>
+    </body>
+</html>
