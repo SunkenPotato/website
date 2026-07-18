@@ -1,6 +1,6 @@
 baseURL = 'https://sunkenpotato.com/'
 languageCode = 'en-us'
-title = 'sp'
+title = 'aeneas'
 theme = "theme"
 enableGitInfo = true
 
@@ -41,5 +41,5 @@ category = 'categories'
                 inline = [['\(', '\)']]
 
 [params]
-    accent = '#157F1F'
+    accent = '#000080'
     math = true

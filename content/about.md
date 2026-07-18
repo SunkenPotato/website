@@ -5,7 +5,7 @@ title = 'About'
 notPost = true
 +++
 
-## Hello, I'm sp.
+## Hello, I'm aeneas.
 
 Also known as SunkenPotato.
 

@@ -5,8 +5,8 @@ title = 'Photography'
 notPost = true
 +++
 
-Apart from other things, I do photography in my free time. My aspiration however, is to become a producer! This is is more or less
-the full catalog of the pictures I've taken.
+
+I do a bit of photography every now and then. This is not a full catalog of the photos I've taken, but still rather expansive.
 
 All of the photos below are licensed under CC-BY-SA.
 

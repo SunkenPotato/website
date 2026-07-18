@@ -1,7 +1,57 @@
-<div id="gallery">
-    {{ range resources.Match "photography/*" }}
-    <div class="framed-img">
-        <img src="{{ .RelPermalink }}" />
+{{ $pageSize := 12 }}
+{{ $images := resources.Match "photography/*" }}
+{{ $total := len $images }}
+
+<div id="gallery" data-page-size="{{ $pageSize }}">
+    {{ range $index, $img := $images }}
+    <div class="framed-img" data-page="{{ div $index $pageSize }}">
+        <img src="{{ $img.RelPermalink }}" loading="lazy" />
     </div>
     {{- end }}
 </div>
+
+{{ if gt $total $pageSize }}
+<nav class="gallery-pagination" aria-label="Gallery pagination">
+    <a type="button" class="gallery-prev" aria-label="Previous page">Previous</a>
+    <span class="gallery-page-indicator"></span>
+    <a type="button" class="gallery-next" aria-label="Next page">Next</a>
+</nav>
+{{ end }}
+
+<script>
+(function () {
+    var gallery = document.getElementById('gallery');
+    if (!gallery) return;
+
+    var items = gallery.querySelectorAll('.framed-img');
+    var pages = {};
+    items.forEach(function (item) {
+        var p = item.dataset.page;
+        (pages[p] = pages[p] || []).push(item);
+    });
+    var pageKeys = Object.keys(pages).map(Number).sort(function (a, b) { return a - b; });
+    if (pageKeys.length === 0) return;
+
+    var indicator = document.querySelector('.gallery-page-indicator');
+    var prevBtn = document.querySelector('.gallery-prev');
+    var nextBtn = document.querySelector('.gallery-next');
+    var current = 0;
+
+    function show(pageIndex) {
+        pageKeys.forEach(function (p) {
+            pages[p].forEach(function (item) {
+                item.style.display = (p === pageIndex) ? '' : 'none';
+            });
+        });
+        current = pageIndex;
+        if (indicator) indicator.textContent = (pageIndex + 1) + ' / ' + pageKeys.length;
+        if (prevBtn) prevBtn.disabled = pageIndex === 0;
+        if (nextBtn) nextBtn.disabled = pageIndex === pageKeys.length - 1;
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (current > 0) show(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (current < pageKeys.length - 1) show(current + 1); });
+
+    show(0);
+})();
+</script>

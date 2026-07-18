@@ -3,6 +3,12 @@
     gap: 10px;
 }
 
+.gallery-pagination {
+    border: none;
+    outline: none;
+    margin: 8px 0 8px 0;
+}
+
 @media (min-width: 600px) {
     #gallery {
         grid-template-columns: 1fr 1fr;
