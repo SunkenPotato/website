@@ -1,7 +1,9 @@
 +++
 date = '2026-07-20T21:55:53+02:00'
 draft = true
+tags = ['playa']
 title = 'Playa: Introduction'
+summary = 'Attempting to make a drum machine on an ESP32 with Rust'
 +++
 Anybody who has played an instrument has or will consider at some point forming a band to create music with people.
 It's normal, you get bored of playing with the backing track, or you feel lonely practicing the same C Blues scale again.
